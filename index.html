@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>NEXUS 2.0</title>
+    
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nexus — TikTok style</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ----- NEXUS • TIKTOK INSPIRED • BOTTOM NAV • PULSE CREATE ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #000000;
+            --secondary: #FF2D55;
+            --accent: #00C2FF;
+            --background: #000000;
+            --surface: #111111;
+            --surface-light: #1A1A1A;
+            --text-primary: #FFFFFF;
+            --text-secondary: #8E8E93;
+            --border: #2C2C2E;
+            --gradient: linear-gradient(135deg, #FF2D55 0%, #00C2FF 100%);
+            --border-radius: 12px;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 100%;
+            position: relative;
+        }
+
+        /* ----- MAIN CONTENT (above bottom bar) ----- */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            height: calc(100vh - 70px); /* space for bottom nav */
+        }
+
+        /* ----- BOTTOM NAVIGATION — TIKTOK STYLE (tools bar at bottom) ----- */
+        .bottom-nav {
+            height: 70px;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 12px;
+            position: relative;
+            z-index: 1000;
+            width: 100%;
+        }
+
+        .nav-item-bottom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+            padding: 8px 0;
+            width: 20%;
+            cursor: pointer;
+        }
+
+        .nav-item-bottom.active {
+            color: var(--text-primary);
+        }
+
+        .nav-icon-bottom {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .nav-label-bottom {
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* ----- PULSE CREATE BUTTON (TikTok style — center, pulsating) ----- */
+        .create-pulse {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 48px;
+            height: 48px;
+            background: var(--gradient);
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 0 15px rgba(255,45,85,0.5);
+            animation: pulse-glow 2.2s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 10px rgba(255,45,85,0.6), 0 0 20px rgba(0,194,255,0.4); }
+            50% { box-shadow: 0 0 20px rgba(255,45,85,0.9), 0 0 35px rgba(0,194,255,0.7); }
+            100% { box-shadow: 0 0 10px rgba(255,45,85,0.6), 0 0 20px rgba(0,194,255,0.4); }
+        }
+
+        .create-pulse i {
+            filter: drop-shadow(0 0 6px rgba(0,0,0,0.5));
+        }
+
+        .create-pulse:hover {
+            transform: scale(1.08);
+        }
+
+        /* ----- FEED (HOME) TIKTOK VERTICAL ----- */
+        .feed-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: black;
+            position: relative;
+        }
+
+        .video-feed {
+            flex: 1;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            position: relative;
+            height: 100%;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .video-feed::-webkit-scrollbar { display: none; }
+
+        .video-container {
+            height: 100%;
+            scroll-snap-align: start;
+            position: relative;
+            overflow: hidden;
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .video-player {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none; /* clicks go to overlay for pause/play */
+        }
+
+        /* transparent overlay to catch taps (pause/play, double like) */
+        .video-tap-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            background: transparent;
+        }
+
+        .video-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 24px 16px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        .video-info { pointer-events: none; }
+        .video-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            pointer-events: auto;
+        }
+
+        .action-button {
+            background: rgba(22, 22, 22, 0.7);
+            border: none;
+            border-radius: 50%;
+            width: 52px;
+            height: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            transition: var(--transition);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .action-button i { font-size: 24px; margin-bottom: 2px; }
+        .action-count { font-size: 12px; font-weight: 500; }
+        .action-button.liked i { color: var(--secondary); animation: heartPop 0.4s; }
+
+        /* double tap heart */
+        .double-tap-heart {
+            position: absolute; font-size: 90px; color: white; opacity: 0;
+            pointer-events: none; z-index: 100; text-shadow: 0 0 20px rgba(255,45,85,0.8);
+            transform: translate(-50%, -50%);
+        }
+        .double-tap-animation { animation: doubleTapHeart 0.9s ease-out forwards; }
+        @keyframes doubleTapHeart {
+            0% { transform: scale(0.3) translateY(0); opacity: 0; }
+            30% { opacity: 1; }
+            100% { transform: scale(1.5) translateY(-80px); opacity: 0; }
+        }
+
+        /* pause indicator */
+        .pause-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.6);
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            z-index: 50;
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+
+        /* ----- DISCOVER / LIVE / MESSAGES / PROFILE (hidden by default) ----- */
+        .page {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            width: 100%;
+            background: black;
+        }
+
+        .page.active-page { display: flex; flex-direction: column; }
+
+        /* ----- PROFILE — TIKTOK STYLE VIDEO GRID ----- */
+        .profile-container { padding: 0; background: black; }
+        .profile-header {
+            padding: 20px 16px;
+            display: flex;
+            gap: 20px;
+            background: black;
+            border-bottom: 1px solid var(--border);
+        }
+        .profile-avatar-large {
+            width: 96px; height: 96px; border-radius: 50%;
+            background: var(--gradient); display: flex;
+            align-items: center; justify-content: center;
+            font-size: 32px; font-weight: 600; color: white;
+            border: 4px solid #222;
+        }
+        .profile-stats { display: flex; gap: 24px; margin: 12px 0; }
+        .profile-tabs {
+            display: flex; border-bottom: 1px solid var(--border);
+            background: black; position: sticky; top: 0; z-index: 20;
+        }
+        .profile-tab {
+            flex: 1; padding: 14px 0; background: none; border: none;
+            color: var(--text-secondary); font-weight: 600; font-size: 15px;
+            cursor: pointer; transition: var(--transition);
+        }
+        .profile-tab.active { color: var(--text-primary); position: relative; }
+        .profile-tab.active:after {
+            content: ''; position: absolute; bottom: -1px; left: 25%; width: 50%;
+            height: 3px; background: var(--gradient); border-radius: 3px;
+        }
+
+        /* ----- TIKTOK STYLE PROFILE VIDEO GRID (3 columns) ----- */
+        .profile-content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            background: black;
+            padding: 2px;
+        }
+
+        .profile-video-card {
+            aspect-ratio: 0.9 / 1.6; /* vertical video ratio */
+            background: #1a1a1a;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            border-radius: 0;
+        }
+
+        .profile-video-card .card-overlay {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            text-shadow: 0 1px 4px black;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 2;
+        }
+
+        .profile-video-card i { font-size: 16px; }
+
+        /* ----- TIKTOK STYLE VIDEO VIEWER (when tapping profile video) ----- */
+        .profile-video-viewer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+        }
+
+        .viewer-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 2100;
+            color: white;
+        }
+
+        .close-viewer {
+            background: rgba(0,0,0,0.5);
+            border: none;
+            color: white;
+            font-size: 26px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+            cursor: pointer;
+        }
+
+        .viewer-video-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: black;
+        }
+
+        .viewer-video-player {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* ----- CREATE MODAL (pulsing button) ----- */
+        .create-modal {
+            display: none; position: fixed; bottom: 80px; left: 0; right: 0;
+            background: rgba(20,20,20,0.95); backdrop-filter: blur(20px);
+            border-radius: 24px 24px 0 0; padding: 24px 16px 32px;
+            z-index: 3000; border-top: 1px solid #333;
+            flex-direction: column; animation: slideUp 0.3s;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .create-header { text-align: center; margin-bottom: 24px; }
+        .create-options { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+        .create-option {
+            background: #222; border-radius: 16px; padding: 20px 8px;
+            text-align: center; cursor: pointer; transition: 0.2s;
+        }
+        .create-option i { font-size: 28px; color: white; margin-bottom: 8px; }
+        .create-option span { font-size: 13px; color: #ccc; }
+
+        /* misc */
+        .hidden { display: none; }
+        .btn-primary { background: var(--gradient); border: none; border-radius: 30px; padding: 10px 24px; color: white; font-weight: 600; cursor: pointer; }
+
+        /* responsive */
+        @media (max-width: 480px) {
+            .profile-content { grid-template-columns: repeat(3,1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- MAIN VIEWPORT (switches pages) -->
+        <div class="main-content" id="mainContentArea">
+            <!-- HOME FEED (TikTok vertical) -->
+            <div id="homePage" class="feed-container" style="display: flex;">
+                <div class="video-feed" id="videoFeed">
+                    <!-- VIDEO 1 -->
+                    <div class="video-container" data-video-id="1">
+                        <video class="video-player" loop playsinline>
+                            <source src="https://assets.mixkit.co/videos/preview/mixkit-young-woman-dancing-at-a-party-3982-large.mp4" type="video/mp4">
+                        </video>
+                        <!-- tap overlay for pause/play & double-tap like -->
+                        <div class="video-tap-overlay"></div>
+                        <div class="pause-indicator" id="pauseIndicator1"><i class="fas fa-play"></i></div>
+                        <div class="video-overlay">
+                            <div class="video-info">
+                                <div class="creator-info" style="display:flex; gap:12px;">
+                                    <div class="creator-avatar" style="width:48px; height:48px; background:var(--gradient); border-radius:50%; display:flex; align-items:center; justify-content:center;">JD</div>
+                                    <div><h4>@jessdesigns</h4><p style="font-size:13px;">2.4M followers</p></div>
+                                </div>
+                                <p class="video-description" style="margin-top:12px;">Morning dance routine ✨ #dance</p>
+                            </div>
+                            <div class="video-actions">
+                                <button class="action-button" data-action="like" data-count="2421"><i class="fas fa-heart"></i><span class="action-count">2.4K</span></button>
+                                <button class="action-button" data-action="comment" data-count="142"><i class="fas fa-comment"></i><span class="action-count">142</span></button>
+                                <button class="action-button" data-action="share" data-count="89"><i class="fas fa-share"></i><span class="action-count">89</span></button>
+                                <button class="action-button" data-action="bookmark"><i class="fas fa-bookmark"></i><span class="action-count">Save</span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- VIDEO 2 -->
+                    <div class="video-container" data-video-id="2">
+                        <video class="video-player" loop playsinline>
+                            <source src="https://assets.mixkit.co/videos/preview/mixkit-comedy-stand-up-show-in-a-bar-4010-large.mp4" type="video/mp4">
+                        </video>
+                        <div class="video-tap-overlay"></div>
+                        <div class="pause-indicator" id="pauseIndicator2"><i class="fas fa-play"></i></div>
+                        <div class="video-overlay">
+                            <div class="video-info">
+                                <div class="creator-info" style="display:flex; gap:12px;"><div class="creator-avatar">CC</div><div><h4>@comedycentral</h4><p>8.9M</p></div></div>
+                                <p class="video-description">When you explain memes 😂</p>
+                            </div>
+                            <div class="video-actions">
+                                <button class="action-button" data-action="like" data-count="847200"><i class="fas fa-heart"></i><span class="action-count">847K</span></button>
+                                <button class="action-button" data-action="comment" data-count="42100"><i class="fas fa-comment"></i><span class="action-count">42.1K</span></button>
+                                <button class="action-button" data-action="share" data-count="18700"><i class="fas fa-share"></i><span class="action-count">18.7K</span></button>
+                                <button class="action-button" data-action="bookmark"><i class="fas fa-bookmark"></i><span class="action-count">Save</span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- VIDEO 3 -->
+                    <div class="video-container" data-video-id="3">
+                        <video class="video-player" loop playsinline>
+                            <source src="https://assets.mixkit.co/videos/preview/mixkit-dj-performing-at-a-club-2012-large.mp4" type="video/mp4">
+                        </video>
+                        <div class="video-tap-overlay"></div>
+                        <div class="pause-indicator" id="pauseIndicator3"><i class="fas fa-play"></i></div>
+                        <div class="video-overlay">
+                            <div class="video-info"><div class="creator-info"><div class="creator-avatar">MP</div><div><h4>@musicpro</h4><p>Live</p></div></div><p class="video-description">Friday DJ set 🎧</p></div>
+                            <div class="video-actions">
+                                <button class="action-button" data-action="like" data-count="12400"><i class="fas fa-heart"></i><span class="action-count">1.4K</span></button>
+                                <button class="action-button" data-action="comment" data-count="3200"><i class="fas fa-comment"></i><span class="action-count">200</span></button>
+                                <button class="action-button" data-action="share" data-count="1200"><i class="fas fa-share"></i><span class="action-count">1K</span></button>
+                                <button class="action-button" data-action="gift"><i class="fas fa-gift"></i><span class="action-count">Gift</span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OTHER PAGES (hidden by default) -->
+            <div id="discoverPage" class="page" style="background:black; padding:16px;">
+                <h2 style="font-size:28px; margin-bottom:16px;">Discover</h2>
+                <div class="discover-grid" id="discoverGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"></div>
+            </div>
+            <div id="livePage" class="page" style="background:black;">
+                <h2 style="padding:16px;">Live</h2>
+                <div id="liveGrid" style="display:flex; flex-direction:column; gap:16px; padding:16px;"></div>
+            </div>
+            <div id="messagesPage" class="page" style="background:black;">
+                <h2 style="padding:16px;">Messages</h2>
+                <div id="chatsList" style="padding:0 16px;"></div>
+            </div>
+            <div id="profilePage" class="page profile-container">
+                <!-- profile header -->
+                <div class="profile-header">
+                    <div class="profile-avatar-large">GH</div>
+                    <div style="flex:1;">
+                        <div style="font-size:22px; font-weight:700;">GreyHound_Vair</div>
+                        <div style="color:var(--text-secondary); margin:4px 0 8px;">@greyhound001</div>
+                        <div class="profile-stats">
+                            <div><span style="font-weight:700;">100M</span><span style="color:gray; margin-left:6px;">Followers</span></div>
+                            <div><span style="font-weight:700;">0</span><span style="color:gray; margin-left:6px;">Following</span></div>
+                            <div><span style="font-weight:700;">1.4B</span><span style="color:gray; margin-left:6px;">Likes</span></div>
+                        </div>
+                        <div style="display:flex; gap:10px; margin-top:10px;">
+                            <button class="btn-primary" style="flex:1;">Edit profile</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- tabs -->
+                <div class="profile-tabs">
+                    <button class="profile-tab active" data-pro-tab="videos">Videos</button>
+                    <button class="profile-tab" data-pro-tab="liked">Liked</button>
+                    <button class="profile-tab" data-pro-tab="live">Live</button>
+                </div>
+                <!-- 3-column grid profile content -->
+                <div class="profile-content" id="profileGridContainer"></div>
+            </div>
+        </div>
+
+        <!-- BOTTOM NAVIGATION (tools bar) – TikTok style -->
+        <div class="bottom-nav">
+            <a class="nav-item-bottom active" data-page="home">
+                <i class="fas fa-home nav-icon-bottom"></i>
+                <span class="nav-label-bottom">Home</span>
+            </a>
+            <a class="nav-item-bottom" data-page="discover">
+                <i class="fas fa-compass nav-icon-bottom"></i>
+                <span class="nav-label-bottom">Discover</span>
+            </a>
+            <!-- PULSE CREATE BUTTON (CENTER, TIKTOK STYLE) -->
+            <div class="create-pulse" id="pulseCreateBtn">
+                <i class="fas fa-plus"></i>
+            </div>
+            <a class="nav-item-bottom" data-page="live">
+                <i class="fas fa-broadcast-tower nav-icon-bottom"></i>
+                <span class="nav-label-bottom">Live</span>
+            </a>
+            <a class="nav-item-bottom" data-page="messages">
+                <i class="fas fa-comments nav-icon-bottom"></i>
+                <span class="nav-label-bottom">Inbox</span>
+            </a>
+            <a class="nav-item-bottom" data-page="profile">
+                <i class="fas fa-user nav-icon-bottom"></i>
+                <span class="nav-label-bottom">Profile</span>
+            </a>
+        </div>
+
+        <!-- CREATE MODAL (triggered by pulse button) -->
+        <div class="create-modal" id="createModal">
+            <div class="create-header">
+                <h3 style="font-size:22px;">Create</h3>
+                <p style="color:#aaa;">Live, video, music, photo</p>
+            </div>
+            <div class="create-options">
+                <div class="create-option" data-create="video"><i class="fas fa-video"></i><span>Video</span></div>
+                <div class="create-option" data-create="live"><i class="fas fa-broadcast-tower"></i><span>Live</span></div>
+                <div class="create-option" data-create="music"><i class="fas fa-music"></i><span>Music</span></div>
+                <div class="create-option" data-create="photo"><i class="fas fa-image"></i><span>Photo</span></div>
+            </div>
+            <button class="close-modal" id="closeCreateModal" style="position:absolute; top:16px; right:20px; background:none; border:none; color:white; font-size:28px;">&times;</button>
+        </div>
+    </div>
+
+    <!-- TIKTOK STYLE VIDEO VIEWER (for profile video taps) -->
+    <div class="profile-video-viewer" id="profileVideoViewer">
+        <div class="viewer-header">
+            <button class="close-viewer" id="closeViewerBtn"><i class="fas fa-arrow-down"></i></button>
+            <span style="background:rgba(0,0,0,0.5); padding:10px 18px; border-radius:30px; font-size:14px;">@jessdesigns</span>
+        </div>
+        <div class="viewer-video-container" id="viewerVideoContainer">
+            <video class="viewer-video-player" id="viewerVideo" loop playsinline></video>
+        </div>
+        <!-- simple actions -->
+        <div style="position:absolute; bottom:30px; right:20px; display:flex; flex-direction:column; gap:20px; color:white;">
+            <button class="action-button" style="background:rgba(0,0,0,0.5);"><i class="fas fa-heart"></i><span>1.2K</span></button>
+            <button class="action-button" style="background:rgba(0,0,0,0.5);"><i class="fas fa-comment"></i><span>88</span></button>
+            <button class="action-button" style="background:rgba(0,0,0,0.5);"><i class="fas fa-share"></i><span>Share</span></button>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            "use strict";
+
+            // ---------- 🎯 BOTTOM NAVIGATION ----------
+            const navItems = document.querySelectorAll('.nav-item-bottom');
+            const pages = {
+                home: document.getElementById('homePage'),
+                discover: document.getElementById('discoverPage'),
+                live: document.getElementById('livePage'),
+                messages: document.getElementById('messagesPage'),
+                profile: document.getElementById('profilePage')
+            };
+
+            // hide all pages, show home
+            function switchPage(pageId) {
+                Object.values(pages).forEach(p => { if (p) p.style.display = 'none'; p?.classList?.remove('active-page'); });
+                if (pages[pageId]) {
+                    pages[pageId].style.display = pageId === 'home' ? 'flex' : 'flex';
+                    pages[pageId].classList.add('active-page');
+                }
+                navItems.forEach(n => n.classList.remove('active'));
+                document.querySelector(`.nav-item-bottom[data-page="${pageId}"]`)?.classList.add('active');
+                if (pageId === 'home') resetHomeFeed();
+            }
+
+            navItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = item.dataset.page;
+                    if (page) switchPage(page);
+                });
+            });
+
+            // pulse create button -> show create modal
+            document.getElementById('pulseCreateBtn').addEventListener('click', () => {
+                document.getElementById('createModal').style.display = 'flex';
+            });
+            document.getElementById('closeCreateModal').addEventListener('click', () => {
+                document.getElementById('createModal').style.display = 'none';
+            });
+            // create options
+            document.querySelectorAll('.create-option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    alert(`📹 Create ${opt.dataset.create} (TikTok style)`);
+                    document.getElementById('createModal').style.display = 'none';
+                });
+            });
+
+            // ---------- 🎬 HOME FEED: TAP TO PAUSE/PLAY + DOUBLE TAP LIKE ----------
+            const videoContainers = document.querySelectorAll('.video-container');
+            function resetHomeFeed() {
+                const containers = document.querySelectorAll('.video-container');
+                containers.forEach((v, idx) => { v.style.display = idx === 0 ? 'flex' : 'none'; });
+                const videos = document.querySelectorAll('.video-player');
+                videos.forEach(v => { v.pause(); v.currentTime = 0; });
+                if (containers[0]) containers[0].querySelector('video')?.play().catch(()=>{});
+            }
+
+            // attach tap events to each container
+            videoContainers.forEach(container => {
+                const video = container.querySelector('video');
+                const pauseIndicator = container.querySelector('.pause-indicator');
+                const overlay = container.querySelector('.video-tap-overlay');
+
+                // SINGLE TAP = pause/play (with indicator)
+                overlay.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (video.paused) {
+                        video.play();
+                        if (pauseIndicator) {
+                            pauseIndicator.innerHTML = '<i class="fas fa-play"></i>';
+                            pauseIndicator.style.opacity = '1';
+                            setTimeout(() => { pauseIndicator.style.opacity = '0'; }, 400);
+                        }
+                    } else {
+                        video.pause();
+                        if (pauseIndicator) {
+                            pauseIndicator.innerHTML = '<i class="fas fa-pause"></i>';
+                            pauseIndicator.style.opacity = '1';
+                            setTimeout(() => { pauseIndicator.style.opacity = '0'; }, 400);
+                        }
+                    }
+                });
+
+                // DOUBLE TAP LIKE (with heart)
+                let lastTap = 0;
+                overlay.addEventListener('dblclick', (e) => {
+                    e.preventDefault();
+                    const rect = container.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const heart = document.createElement('div');
+                    heart.className = 'double-tap-heart';
+                    heart.innerHTML = '<i class="fas fa-heart" style="color:#FF2D55;"></i>';
+                    heart.style.left = x + 'px';
+                    heart.style.top = y + 'px';
+                    container.appendChild(heart);
+                    setTimeout(() => heart.classList.add('double-tap-animation'), 5);
+                    setTimeout(() => heart.remove(), 800);
+
+                    // trigger like button
+                    const likeBtn = container.querySelector('[data-action="like"]');
+                    if (likeBtn && !likeBtn.classList.contains('liked')) {
+                        likeBtn.click();
+                    }
+                });
+            });
+
+            // action buttons (like, comment, etc)
+            document.body.addEventListener('click', (e) => {
+                const btn = e.target.closest('.action-button');
+                if (!btn) return;
+                const action = btn.dataset.action;
+                const countSpan = btn.querySelector('.action-count');
+                if (action === 'like') {
+                    btn.classList.toggle('liked');
+                    let count = parseInt(btn.dataset.count) || 0;
+                    if (btn.classList.contains('liked')) count += 1; else count = Math.max(0, count-1);
+                    btn.dataset.count = count;
+                    if (countSpan) countSpan.textContent = count > 999 ? (count/1000).toFixed(1)+'K' : count;
+                } else if (action === 'comment') alert('💬 Comments');
+                else if (action === 'share') alert('📤 Share');
+                else if (action === 'gift') alert('🎁 Gifts');
+                else if (action === 'bookmark') alert('📌 Saved');
+            });
+
+            // keyboard next/prev
+            document.addEventListener('keydown', (e) => {
+                if (!pages.home || pages.home.style.display !== 'flex') return;
+                if (e.key === 'ArrowDown') { e.preventDefault(); scrollToNext(); }
+                if (e.key === 'ArrowUp') { e.preventDefault(); scrollToPrev(); }
+            });
+
+            window.scrollToNext = function() {
+                const current = document.querySelector('.video-container[style*="flex"]');
+                if (!current) return;
+                let next = current.nextElementSibling;
+                if (!next || !next.classList.contains('video-container')) next = document.querySelector('.video-container');
+                if (next) {
+                    current.style.display = 'none';
+                    next.style.display = 'flex';
+                    current.querySelector('video')?.pause();
+                    next.querySelector('video')?.play().catch(()=>{});
+                }
+            };
+            window.scrollToPrev = function() {
+                const current = document.querySelector('.video-container[style*="flex"]');
+                if (!current) return;
+                let prev = current.previousElementSibling;
+                if (!prev || !prev.classList.contains('video-container')) {
+                    const all = document.querySelectorAll('.video-container');
+                    prev = all[all.length-1];
+                }
+                if (prev) {
+                    current.style.display = 'none';
+                    prev.style.display = 'flex';
+                    current.querySelector('video')?.pause();
+                    prev.querySelector('video')?.play().catch(()=>{});
+                }
+            };
+
+            // ---------- 🌟 PROFILE PAGE : TIKTOK STYLE VIDEO GRID & TAP -> FULLSCREEN VIEWER ----------
+            const profileGrid = document.getElementById('profileGridContainer');
+            const mockVideos = [
+                { title: 'Morning dance', views: '2.4M', src: 'https://assets.mixkit.co/videos/preview/mixkit-young-woman-dancing-at-a-party-3982-large.mp4' },
+                { title: 'Workout', views: '1.2M', src: 'https://assets.mixkit.co/videos/preview/mixkit-young-woman-performing-squats-with-dumbbells-47701-large.mp4' },
+                { title: 'Sunset', views: '892K', src: 'https://assets.mixkit.co/videos/preview/mixkit-beautiful-female-model-posing-on-the-beach-47948-large.mp4' },
+                { title: 'Tutorial', views: '654K', src: 'https://assets.mixkit.co/videos/preview/mixkit-young-makeup-artist-applying-lipstick-47735-large.mp4' },
+                { title: 'Vlog', views: '421K', src: 'https://assets.mixkit.co/videos/preview/mixkit-woman-talking-about-a-product-47728-large.mp4' },
+                { title: 'Dance 2', views: '1.1M', src: 'https://assets.mixkit.co/videos/preview/mixkit-young-woman-dancing-at-the-club-47731-large.mp4' }
+            ];
+
+            function renderProfileGrid() {
+                let html = '';
+                mockVideos.forEach((vid, i) => {
+                    html += `<div class="profile-video-card" data-index="${i}" data-src="${vid.src}" data-title="${vid.title}">
+                                <div style="width:100%; height:100%; background: linear-gradient(145deg, #333, #111);"></div>
+                                <div class="card-overlay">
+                                    <i class="fas fa-play"></i> ${vid.views}
+                                </div>
+                            </div>`;
+                });
+                profileGrid.innerHTML = html;
+
+                // attach click to each card -> open TikTok style viewer
+                document.querySelectorAll('.profile-video-card').forEach(card => {
+                    card.addEventListener('click', function(e) {
+                        const src = this.dataset.src;
+                        const title = this.dataset.title;
+                        openProfileVideoViewer(src, title);
+                    });
+                });
+            }
+
+            // TikTok style fullscreen viewer for profile
+            const viewer = document.getElementById('profileVideoViewer');
+            const viewerVideo = document.getElementById('viewerVideo');
+            function openProfileVideoViewer(src, title) {
+                viewer.style.display = 'flex';
+                viewerVideo.src = src;
+                viewerVideo.play().catch(()=>{});
+                document.querySelector('#profileVideoViewer span').innerText = '@jessdesigns • ' + title;
+            }
+            document.getElementById('closeViewerBtn').addEventListener('click', () => {
+                viewer.style.display = 'none';
+                viewerVideo.pause();
+            });
+
+            // Profile tabs
+            document.querySelectorAll('.profile-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    // just re-render same grid for demo
+                    renderProfileGrid();
+                });
+            });
+
+            // ---------- DISCOVER / LIVE / MESSAGES (minimal demo) ----------
+            const discoverGrid = document.getElementById('discoverGrid');
+            discoverGrid.innerHTML = `
+                <div style="background:#222; padding:12px; border-radius:12px;">🎬 #dance challenge</div>
+                <div style="background:#222; padding:12px; border-radius:12px;">🍔 recipe</div>
+                <div style="background:#222; padding:12px; border-radius:12px;">🎮 gaming</div>
+                <div style="background:#222; padding:12px; border-radius:12px;">👗 fashion</div>
+            `;
+            document.getElementById('liveGrid').innerHTML = '<div style="background:#222; padding:20px; border-radius:16px;">🔴 @musicpro • 4.2K watching</div>';
+            document.getElementById('chatsList').innerHTML = '<div style="background:#222; padding:16px; border-radius:12px;">💬 @comedycentral: Hey!</div>';
+
+            // init
+            renderProfileGrid();
+            resetHomeFeed();
+
+            // default home active
+            switchPage('home');
+        })();
+    </script>
+</body>
+</html>
+    
+  </body>
+  
+</html>
